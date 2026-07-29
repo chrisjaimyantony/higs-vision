@@ -1,0 +1,40 @@
+# Virtual environments
+.higs/
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Raw data
+data/raw/
+
+# Processed data
+data/processed/
+
+# Model checkpoints
+models/
+notebooks/models/
+*.pt
+*.pth
+*.ckpt
+
+# Experiment results
+results/
+
+# Serialized objects
+*.pkl
+*.joblib
+*.npy
+*.npz
+
+# Databases
+*.db

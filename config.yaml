@@ -1,0 +1,125 @@
+# =============================================
+# HiggsVision - Project Configuration
+# =============================================
+
+project:
+  name: "HiggsVision"
+  description: "Explainable and Uncertainty-Aware Deep Learning for Higgs Boson Classification"
+  seed: 42
+
+# --- Hardware ---
+hardware:
+  num_threads: 16
+  device: "cpu"
+
+# --- Paths ---
+paths:
+  raw_data: "data/raw/HIGGS.csv"
+  processed_dir: "data/processed/"
+  models_dir: "models/"
+  results_dir: "results/"
+  figures_dir: "figures/"
+
+# --- Dataset ---
+dataset:
+  full_size: 11000000
+  subsample_size: 1000000
+  n_features: 28
+  label_column: 0
+  feature_columns_start: 1
+  feature_columns_end: 29
+  class_names: ["background", "signal"]
+
+# --- Data Split ---
+split:
+  train_ratio: 0.70
+  val_ratio: 0.15
+  test_ratio: 0.15
+  stratify: true
+
+# --- Baselines ---
+baselines:
+  logistic_regression:
+    C_values: [0.01, 0.1, 1, 10]
+  random_forest:
+    n_estimators: 500
+    max_depth: null
+  xgboost:
+    n_estimators: 500
+    learning_rate: 0.1
+    max_depth: 6
+    early_stopping_rounds: 10
+
+# --- DNN ---
+dnn:
+  hidden_dims: [512, 256, 128, 64]
+  activation: "ReLU"
+  dropout: 0.3
+  batch_norm: true
+  optimizer: "AdamW"
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  batch_size: 4096
+  max_epochs: 60
+  early_stopping_patience: 10
+  cosine_annealing: true
+
+# --- Optuna HPO ---
+optuna:
+  study_name: "higgs_hpo"
+  storage: "sqlite:///results/optuna/higgs_hpo.db"
+  direction: "maximize"
+  metric: "val_roc_auc"
+  time_budget_hours: 24
+  convergence_patience_pct: 0.15
+  sampler: "TPE"
+  pruner: "MedianPruner"
+  search_space:
+    hidden_width: [256, 512, 1024]
+    dropout: [0.1, 0.5]
+    learning_rate: [0.0005, 0.01]
+    weight_decay: [0.00001, 0.001]
+    batch_size: [1024, 2048, 4096, 8192]
+    activation: ["ReLU", "GELU", "SiLU"]
+    batch_norm: [true, false]
+    cosine_annealing: [true, false]
+
+# --- Uncertainty Quantification ---
+uncertainty:
+  mc_dropout_passes: 100
+  ensemble_seeds: [42, 123, 456]
+  n_ensemble_members: 3
+  ece_n_bins: 15
+
+# --- Explainability ---
+explainability:
+  shap_background_seed: 77
+  shap_background_size: 100
+  ablation_k_values: [1, 2, 3, 5, 7, 10, 14, 18, 22, 28]
+  n_random_orderings: 3
+
+# --- Random Seeds ---
+seeds:
+  data_split: 42
+  dnn_final: 42
+  optuna_sampler: 42
+  ensemble_member_1: 42
+  ensemble_member_2: 123
+  ensemble_member_3: 456
+  shap_background: 77
+  random_forest: 42
+  xgboost: 42
+  random_ablation_1: 100
+  random_ablation_2: 200
+  random_ablation_3: 300
+
+# --- UMAP ---
+umap:
+  n_neighbors: 15
+  min_dist: 0.1
+  metric: "euclidean"
+
+# --- Dashboard ---
+dashboard:
+  max_pages: 7
+  port: 8501
